@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday — For You ♥</title>
+<style>
+  :root{
+    --bg-1: #fff0f4;
+    --bg-2: #ffe6ef;
+    --card:#ffffffee;
+    --accent:#ff2d6f;
+    --accent-2:#ff85a2;
+    --pink-lite:#ffd7e3;
+    --text:#4a2230;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:Inter, "Segoe UI", system-ui, Helvetica, Arial, sans-serif;background:linear-gradient(180deg,var(--bg-1),var(--bg-2));color:var(--text);-webkit-font-smoothing:antialiased;}
+  /* full screen layers */
+  .sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}
+  .heart{position:absolute;font-size:22px;opacity:.9;transform:translateY(-120vh);animation:fall linear infinite;will-change:transform,opacity}
+  @keyframes fall{0%{transform:translateY(-20vh) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(120vh) rotate(360deg);opacity:.95}}
+  /* overlay intro */
+  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(180deg,rgba(255,245,250,0.96),rgba(255,240,246,0.94));z-index:30;transition:opacity .7s ease, transform .7s ease;}
+  .overlay.hidden{opacity:0;transform:scale(1.03);pointer-events:none}
+  .overlay .title{font-size:46px;font-weight:900;color:var(--accent);text-align:center;letter-spacing:0.6px}
+  .overlay .sub{margin-top:10px;color:#7a515f}
+  .btn{margin-top:18px;background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;color:#fff;padding:12px 20px;border-radius:999px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(255,45,111,0.18)}
+  /* center greeting area (after click) */
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .8s ease;z-index:5}
+  .wrap.visible{opacity:1}
+  .card{width:980px;max-width:96%;background:var(--card);border-radius:20px;padding:28px;box-shadow:0 18px 60px rgba(135,63,88,0.12);position:relative;text-align:center}
+  .greeting{font-size:42px;font-weight:900;color:var(--accent);margin-top:6px}
+  .greeting-sub{color:#6d4850;margin-top:8px;font-weight:600}
+  .explore{margin-top:18px;display:inline-block;background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#fff;padding:10px 18px;border-radius:999px;font-weight:800;border:none;cursor:pointer;opacity:0;transform:translateY(6px);transition:opacity .4s ease, transform .4s ease}
+  .explore.visible{opacity:1;transform:translateY(0)}
+  /* sections hidden initially */
+  .sections{margin-top:20px;display:none;gap:18px}
+  .sections.visible{display:flex}
+  .col{flex:1;min-width:260px}
+  .panel{background:linear-gradient(180deg,#fff,#fff6fb);padding:14px;border-radius:12px;box-shadow:0 8px 22px rgba(120,60,80,0.06);text-align:left}
+  .panel h3{margin:0 0 8px 0;font-size:16px;color:var(--accent)}
+  .note-text{font-size:16px;min-height:72px}
+  .controls{display:flex;gap:8px;margin-top:10px}
+  .tiny{background:#fff;border:1px solid #ffdee8;padding:8px 10px;border-radius:10px;cursor:pointer}
+  /* timeline */
+  .timeline{display:flex;gap:10px;overflow:auto;padding-top:6px}
+  .thumb{width:84px;height:84px;border-radius:10px;background:linear-gradient(135deg,#ffe2ee,#fff0f6);display:flex;align-items:center;justify-content:center;font-size:28px;flex:0 0 84px}
+  .caption{font-size:13px;color:#7a5b63;margin-top:6px}
+  /* game */
+  .game-area{position:relative;height:200px;border-radius:10px;background:linear-gradient(180deg,#fff,#fff7fb);overflow:hidden}
+  .g-heart{position:absolute;font-size:30px;cursor:pointer;user-select:none;transition:transform .12s}
+  .hint{font-size:13px;color:#7a5b63;margin-top:8px}
+  /* flower shower layer */
+  .flowers{position:fixed;inset:0;pointer-events:none;z-index:25;overflow:hidden}
+  .flower{position:absolute;font-size:28px;transform:translateY(-40vh);animation:flowerFall linear both}
+  @keyframes flowerFall{to{transform:translateY(120vh) rotate(360deg);opacity:0}}
+  /* footer */
+  footer{margin-top:16px;text-align:right;color:#7a515f;font-size:13px}
+  /* responsive */
+  @media(max-width:900px){.sections{flex-direction:column}.card{padding:16px}.greeting{font-size:32px}}
+</style>
+</head>
+<body>
+  <!-- falling hearts layer (ONLY during intro + greeting) -->
+  <div class="sky" id="sky"></div>
+
+  <!-- intro overlay -->
+  <div class="overlay" id="overlay">
+    <div class="title">Happy Birthday, My Love..❤️</div>
+    <div class="sub">A little surprise I made with all my heart</div>
+    <button class="btn" id="begin">Click to Begin</button>
+  </div>
+
+  <!-- flower shower (one-time) -->
+  <div class="flowers" id="flowers"></div>
+
+  <!-- main content -->
+  <div class="wrap" id="wrap">
+    <div class="card" id="card">
+      <div class="greeting">Happy Birthday, Sweetheart.. 🎉</div>
+      <div class="greeting-sub">You make every day brighter , this little page is for you.</div>
+      <button class="explore" id="explore">Explore your surprises ✨</button>
+
+      <div class="sections" id="sections" style="display:flex;flex-wrap:wrap">
+        <!-- Left column: Love notes & timeline -->
+        <div class="col" style="min-width:320px;">
+          <div class="panel" style="margin-bottom:12px">
+            <h3>Love Notes ❤️</h3>
+            <div class="note-text" id="noteText">You make every ordinary day feel like a little miracle..</div>
+            <div class="controls">
+              <button class="tiny" id="prevNote">◀ Prev</button>
+              <button class="tiny" id="nextNote">Next ▶</button>
+              <div style="margin-left:auto;color:#7a5b63;font-size:13px;padding-top:8px">Tap anywhere for tiny hearts</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3></h3>
+            <div>
+              <div>
+                <div>
+                <div>
+              </div>
+              <div>
+                <div>
+                <div>
+              </div>
+              <div>
+                <div>
+                <div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Game & Gift -->
+        <div class="col" style="min-width:300px;">
+          <div class="panel" style="margin-bottom:12px">
+            <h3>Mini Game 🎮</h3>
+            <div class="game-area" id="gameArea"></div>
+            <div class="hint">Find <span id="remaining">5</span> hearts hidden — click each one!!</div>
+          </div>
+
+          <div class="panel">
+            <h3>Gift Reveal 🎁</h3>
+            <div style="margin-top:6px;color:#7a5b63">Open your little gift below.</div>
+            <div style="text-align:center;margin-top:10px">
+              <button class="btn" id="giftBtn" style="padding:10px 14px">Open the Gift</button>
+            </div>
+            <div id="finalMsg" style="margin-top:10px;color:#6d4850;font-weight:600">A sweet message will appear here after you open the gift.</div>
+          </div>
+        </div>
+      </div>
+
+      <footer>With all my love ♥</footer>
+    </div>
+  </div>
+
+<script>
+/* ----------------- Setup falling hearts (intro + greeting) ----------------- */
+const sky = document.getElementById('sky');
+let heartsPool = []; // store nodes so we can remove them later
+function startFallingHearts(count=22){
+  // create hearts spread across screen
+  for(let i=0;i<count;i++){
+    const h = document.createElement('div');
+    h.className='heart';
+    h.textContent = Math.random()>0.2 ? '❤️' : '💗';
+    h.style.left = Math.random()*100 + '%';
+    h.style.top = (Math.random()*-30) + 'vh';
+    h.style.fontSize = (12 + Math.random()*40) + 'px';
+    h.style.opacity = (0.6 + Math.random()*0.4);
+    h.style.animationDuration = (8 + Math.random()*14) + 's';
+    h.style.animationDelay = (Math.random()*-20) + 's';
+    sky.appendChild(h);
+    heartsPool.push(h);
+  }
+}
+function stopFallingHearts(){
+  // remove heart nodes to stop visuals
+  heartsPool.forEach(n => n.remove());
+  heartsPool = [];
+}
+
+/* ----------------- Intro & Greeting flow ----------------- */
+const overlay = document.getElementById('overlay');
+const wrap = document.getElementById('wrap');
+const beginBtn = document.getElementById('begin');
+const exploreBtn = document.getElementById('explore');
+const sections = document.getElementById('sections');
+const flowers = document.getElementById('flowers');
+
+startFallingHearts(); // hearts start immediately for intro
+
+beginBtn.addEventListener('click', () => {
+  // hide overlay, show greeting (wrap)
+  overlay.classList.add('hidden');
+  // small celebratory quick hearts
+  for(let i=0;i<8;i++){
+    const p = document.createElement('div');
+    p.className = 'heart';
+    p.textContent = '💖';
+    p.style.left = (50 + (Math.random()-0.5)*40) + '%';
+    p.style.top = (45 + (Math.random()-0.5)*20) + '%';
+    p.style.fontSize = (14 + Math.random()*36) + 'px';
+    p.style.animationDuration = (1 + Math.random()*1.4) + 's';
+    sky.appendChild(p);
+    setTimeout(()=>p.remove(),1600);
+  }
+  setTimeout(()=>wrap.classList.add('visible'),400);
+  // reveal Explore button after 2s
+  setTimeout(()=>exploreBtn.classList.add('visible'),2000);
+});
+
+/* ----------------- Explore -> flower shower -> reveal sections ----------------- */
+let flowerTriggered = false;
+exploreBtn.addEventListener('click', ()=>{
+  if(!flowerTriggered){
+    flowerTriggered = true;
+    triggerFlowerShower();
+    // stop hearts after short delay so greeting still has moment
+    setTimeout(()=>stopFallingHearts(),900);
+  }
+  // reveal the interactive sections
+  sections.classList.add('visible');
+  // smooth scroll a little (if viewport small)
+  setTimeout(()=>document.getElementById('card').scrollIntoView({behavior:'smooth', block:'center'}),180);
+});
+
+/* ----------------- Flower shower (one-time) ----------------- */
+function triggerFlowerShower(){
+  const petals = ['🌸','🌺','🌷','🌻','💐','✨'];
+  for(let i=0;i<48;i++){
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.textContent = petals[Math.floor(Math.random()*petals.length)];
+    f.style.left = (5 + Math.random()*90) + '%';
+    f.style.top = (Math.random()*-30) + 'vh';
+    f.style.fontSize = (12 + Math.random()*40) + 'px';
+    f.style.animationDuration = (2 + Math.random()*3) + 's';
+    flowers.appendChild(f);
+    // cleanup
+    (function(node){ setTimeout(()=>node.remove(),7000); })(f);
+  }
+}
+
+/* ----------------- Love notes controls ----------------- */
+const notes = [
+  "You make every ordinary day feel damn Special to Me..",
+  "Your Smile is My Favorite Sight, it's extremely Pretty..",
+  "Thank You for being My Greatest Support and My Calmest Home..",
+  "Your Eyes..They're not just as deep as an ocean..but deeper than the black hole, My Baby..",
+  "Your Beauty..Even flowers turn their heads when you pass by..wondering how can someone be more breathtaking than the nature itself..",
+  "I love hearing you laugh, it brings a smile on my face..",
+  "With You, every single moment feels so damn Beautiful..",
+  "You are Kind, Brilliant, and Prettier than I could ever describe..",
+  "Growing with You has been My Life's Greatest Adventure..",
+  "I fall in love with You more and more every single day, My Darling.."
+];
+let noteIndex = 0;
+const noteText = document.getElementById('noteText');
+document.getElementById('nextNote').addEventListener('click', ()=> {
+  noteIndex = (noteIndex + 1) % notes.length;
+  noteText.textContent = notes[noteIndex];
+});
+document.getElementById('prevNote').addEventListener('click', ()=> {
+  noteIndex = (noteIndex - 1 + notes.length) % notes.length;
+  noteText.textContent = notes[noteIndex];
+});
+
+/* ----------------- Mini game: find hearts ----------------- */
+const gameArea = document.getElementById('gameArea');
+const remaining = document.getElementById('remaining');
+const totalHearts = 5;
+let found = 0;
+let gameHearts = [];
+function placeGameHearts(){
+  // clear previous
+  gameHearts.forEach(h => h.remove());
+  gameHearts = [];
+  found = 0;
+  remaining.textContent = totalHearts;
+  const rect = gameArea.getBoundingClientRect();
+  const w = rect.width || 300, h = rect.height || 200;
+  for(let i=0;i<totalHearts;i++){
+    const el = document.createElement('div');
+    el.className = 'g-heart';
+    el.textContent = '💘';
+    const x = 8 + Math.random()*(w-40);
+    const y = 8 + Math.random()*(h-40);
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.style.fontSize = (20 + Math.random()*18) + 'px';
+    el.addEventListener('click', function(){
+      if(el.dataset.f) return;
+      el.dataset.f = '1';
+      el.style.transform = 'scale(0.85) rotate(-15deg)';
+      el.style.opacity = '.6';
+      found++;
+      remaining.textContent = totalHearts - found;
+      // quick particle
+      const p = document.createElement('div');
+      p.className = 'heart';
+      p.textContent = '💖';
+      // compute relative position within page
+      const areaRect = gameArea.getBoundingClientRect();
+      p.style.left = (areaRect.left + x + 12) + 'px';
+      p.style.top = (areaRect.top + y + 12) + 'px';
+      p.style.position = 'fixed';
+      p.style.fontSize = '22px';
+      p.style.animationDuration = '1s';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),1100);
+
+      if(found === totalHearts) {
+        onWinGame();
+      }
+    });
+    gameArea.appendChild(el);
+    gameHearts.push(el);
+  }
+}
+function onWinGame(){
+  const b = document.createElement('div');
+  b.className = 'panel';
+  b.style.position = 'absolute';
+  b.style.left = '10px';
+  b.style.right = '10px';
+  b.style.top = '30px';
+  b.style.zIndex = 6;
+  b.innerHTML = '<div style="font-weight:800">You found them all!! 💖</div><div style="margin-top:6px">That\'s how I felt when I found you.. Just way too fuckin Happy..</div>';
+  gameArea.appendChild(b);
+  setTimeout(()=>b.remove(),4200);
+  document.getElementById('finalMsg').textContent = "You found all hearts , Tap 'Open the Gift' for something special.";
+}
+placeGameHearts();
+window.addEventListener('resize', ()=>{ placeGameHearts(); });
+
+/* ----------------- Gift reveal & flower burst ----------------- */
+document.getElementById('giftBtn').addEventListener('click', ()=> {
+  // create a burst of flowers near center
+  for(let i=0;i<28;i++){
+    const f = document.createElement('div');
+    f.className = 'flower';
+    const petals = ['🌸','🌺','🌷','🌻','💐'];
+    f.textContent = petals[Math.floor(Math.random()*petals.length)];
+    f.style.left = (30 + Math.random()*40) + '%';
+    f.style.top = (-10 - Math.random()*20) + 'vh';
+    f.style.fontSize = (16 + Math.random()*34) + 'px';
+    f.style.animationDuration = (2 + Math.random()*2.2) + 's';
+    flowers.appendChild(f);
+    (function(node){ setTimeout(()=>node.remove(),4200); })(f);
+  }
+  const finalMsg = document.getElementById('finalMsg');
+  finalMsg.innerHTML = "<div style='font-weight:800;font-size:15px'>Happy Birthday, My Muskan..💖🎉</div><div style='margin-top:6px'>I hope your day is as beautiful as you make every day for me.. You're truly Special and Precious to Me, My Muskan.. Take Care of Yourself always and keep smiling every single day..with Me.. I'm very glad to have you in My Life, My Darling.. I love you soo goddamn hard..💖</div>";
+});
+
+/* ----------------- small interactive hearts on click ----------------- */
+document.addEventListener('click', function(e){
+  const tag = e.target.tagName.toLowerCase();
+  if(['button','a'].includes(tag)) return;
+  // spawn tiny heart where clicked only if hearts are still active (intro/greeting)
+  // we check if heartsPool not empty OR if explore not triggered yet
+  if(heartsPool.length === 0) return;
+  const p = document.createElement('div');
+  p.className = 'heart';
+  p.textContent = '💗';
+  const rect = document.body.getBoundingClientRect();
+  p.style.left = (e.clientX / rect.width * 100) + '%';
+  p.style.top = (e.clientY / rect.height * 100) + '%';
+  p.style.fontSize = '18px';
+  p.style.animationDuration = '1.2s';
+  sky.appendChild(p);
+  setTimeout(()=>p.remove(),1200);
+});
+
+/* ensure greeting visible if user landed after overlay hidden */
+if (!overlay.classList.contains('hidden')) {
+  // nothing
+} else {
+  wrap.classList.add('visible');
+}
+</script>
+</body>
+</html>
